@@ -4,7 +4,7 @@ const excel = require('excel4node');
 const fs = require("fs"); // Or `import fs from "fs";` with ESM
 
 // Reading our test file
-const fileName = "20210904-XuLy";
+const fileName = "20210906-XuLy";
 
 // result file name
 const retFileName = fileName + '-Done.xlsx';
@@ -24,7 +24,7 @@ const sheets = file.SheetNames
 const sheetsFile2 = mapDistrictBdFile.SheetNames
 const sheetsFile3 = provinceCodeFile.SheetNames
 
-changeAlias = function (str) {
+function changeAlias(str) {
     if (str == null || str == "") return str;
     str = str + "";
     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
@@ -40,7 +40,7 @@ changeAlias = function (str) {
     str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
     str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
     str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
-    str = str.replace(/Đ/g, "D");
+    str = str.replace(/Đ|đ/g, "D");
     str = str.replace(/€/g, "E");
     str = str.replace(/¬/g, "-");
     str = str.replace(/¹|¼|½/g, "1");
@@ -59,11 +59,6 @@ changeAlias = function (str) {
     }
     return ret.toLowerCase().trim();
 };
-
-function replaceAll(str, find, replace) {
-    const pieces = str.split(find);
-    return pieces.join(replace)
-}
 
 function phoneNomalize(phone) {
     if (phone != undefined) {
@@ -123,19 +118,20 @@ for (let i = 0; i < sheetsFile3.length; i++) {
     })
 }
 
-// Printing data
-// for (let i = 0; i < data.length; i++) {
-//     const element = data[i];
-//     console.log(element);
-// }
+
 console.log("data__length", data.length);
 console.log("map__District", mapDistrict.length);
 console.log("province__List", provinceList.length);
-// for (let i = 0; i < constant.length; i++) {
-//     const element = constant[i];
-//     console.log(element.namedistrict2);
-//     console.log(element.districtCode);
-// }
+
+
+const THU_DAU_MOT_CODE = 718;
+const BEN_CAT_CODE = 721;
+const TAN_UYEN_CODE = 723;
+const BAC_TAN_UYEN_CODE = 726;
+const DAU_TIENG_CODE = 7202;
+const HO_CHI_MINH_CITY_CODE = 79;
+const BINH_DUONG_PROVINCE_CODE = 74;
+
 
 for (let i = 0; i < data.length; i++) {
     const person = data[i];
@@ -147,16 +143,16 @@ for (let i = 0; i < data.length; i++) {
     person.testCode = (person.testCode).toUpperCase();
     console.log(person.address);
 
-    person.provinceCode = 74;
-    let tempD = changeAlias(district).toLowerCase();
+    person.provinceCode = BINH_DUONG_PROVINCE_CODE;
+    let tempD = changeAlias(district);
     for (let i = 0; i < provinceList.length; i++) {
         const e = provinceList[i];
-        let b = changeAlias(e.shortName).toLowerCase();
+        let b = changeAlias(e.shortName);
         if (tempD.indexOf(b) >= 0) {
             person.provinceCode = e.code;
         }
         if (tempD == "tinh ngoai") {
-            let a = changeAlias(person.address).toLowerCase();
+            let a = changeAlias(person.address);
             if (a.indexOf(b) >= 0) {
                 person.provinceCode = e.code;
             }
@@ -167,7 +163,7 @@ for (let i = 0; i < data.length; i++) {
             tempD.indexOf("hooc mon") >= 0 || tempD.indexOf("quan 12") >= 0 ||
             tempD.indexOf("quan 4") >= 0 || tempD.indexOf("quan 5") >= 0 ||
             tempD.indexOf("hcm") >= 0) {
-            person.provinceCode = 79;
+            person.provinceCode = HO_CHI_MINH_CITY_CODE;
         }
     }
     let phone = person.phone;
@@ -178,48 +174,48 @@ for (let i = 0; i < data.length; i++) {
 
     for (let i = 0; i < mapDistrict.length; i++) {
         if (districtAlias == null || districtAlias == "" || districtAlias == " ") {
-            person.districtCode = 7202;
+            person.districtCode = DAU_TIENG_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("bac tan uyen")) >= 0) {
-            person.districtCode = 726;
+            person.districtCode = BAC_TAN_UYEN_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("dat cuoc")) >= 0) {
-            person.districtCode = 726;
+            person.districtCode = BAC_TAN_UYEN_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("khanh binh")) >= 0) {
-            person.districtCode = 723;
+            person.districtCode = TAN_UYEN_CODE;
             break;
         }
 
         if (districtAlias.indexOf(changeAlias("khanh loc")) >= 0) {
-            person.districtCode = 723;
+            person.districtCode = TAN_UYEN_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("thoi hoa")) >= 0) {
-            person.districtCode = 721;
+            person.districtCode = BEN_CAT_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("hoa loi")) >= 0) {
-            person.districtCode = 721;
+            person.districtCode = BEN_CAT_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("my phuoc")) >= 0 || districtAlias.indexOf(changeAlias("tan dinh")) >= 0) {
-            person.districtCode = 721;
+            person.districtCode = BEN_CAT_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("mp1")) >= 0 || districtAlias.indexOf(changeAlias("mp2")) >= 0 || districtAlias.indexOf(changeAlias("an tay")) >= 0) {
-            person.districtCode = 721;
+            person.districtCode = BEN_CAT_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("mp3")) >= 0 || districtAlias.indexOf(changeAlias("mp4")) >= 0 || districtAlias.indexOf(changeAlias("chanh phu hoa")) >= 0) {
-            person.districtCode = 721;
+            person.districtCode = BEN_CAT_CODE;
             break;
         }
         if (districtAlias.indexOf(changeAlias("tdm")) >= 0) {
-            person.districtCode = 718;
+            person.districtCode = THU_DAU_MOT_CODE;
             break;
         }
         const con = mapDistrict[i];
@@ -231,7 +227,7 @@ for (let i = 0; i < data.length; i++) {
 
     }
     if (person.districtCode == "" || person.districtCode == null || person.districtCode == 720 || person.districtCode == 722) {
-        person.districtCode = 7202;
+        person.districtCode = DAU_TIENG_CODE;
     }
     let communeAlias = changeAlias(person.commune);
     console.log("commune_Alias", communeAlias, i);
@@ -297,7 +293,7 @@ function saveFile(data) {
 
         const ws = reader.utils.json_to_sheet(data)
         const fileResult = reader.readFile(path)
-        console.log("data,", data.length);
+        console.log("data__length_final", data.length);
         reader.utils.book_append_sheet(fileResult, ws, "result")
         // Writing to our file
         reader.writeFile(fileResult, path)
