@@ -4,7 +4,7 @@ const excel = require('excel4node');
 const fs = require("fs"); // Or `import fs from "fs";` with ESM
 
 // Reading our test file
-const fileName = "20210906-XuLy";
+const fileName = "20210915-XuLy";
 
 // result file name
 const retFileName = fileName + '-Done.xlsx';
@@ -162,6 +162,7 @@ for (let i = 0; i < data.length; i++) {
             tempD.indexOf("phu nhuan") >= 0 || tempD.indexOf("quan 8") >= 0 ||
             tempD.indexOf("hooc mon") >= 0 || tempD.indexOf("quan 12") >= 0 ||
             tempD.indexOf("quan 4") >= 0 || tempD.indexOf("quan 5") >= 0 ||
+            tempD.indexOf("quan 6") >= 0 || tempD.indexOf("quan 7") >= 0 ||
             tempD.indexOf("hcm") >= 0) {
             person.provinceCode = HO_CHI_MINH_CITY_CODE;
         }
@@ -191,6 +192,10 @@ for (let i = 0; i < data.length; i++) {
         }
 
         if (districtAlias.indexOf(changeAlias("khanh loc")) >= 0) {
+            person.districtCode = TAN_UYEN_CODE;
+            break;
+        }
+        if (districtAlias.indexOf(changeAlias("uyen hung")) >= 0) {
             person.districtCode = TAN_UYEN_CODE;
             break;
         }
