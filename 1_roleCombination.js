@@ -1,7 +1,7 @@
-const csv = require('csv-parser');
-const fs = require('fs');
+import csv from 'csv-parser';
+import { createReadStream } from 'fs';
 
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
 const csvWriter = createCsvWriter({
     path: 'out.csv',
     header: [{
@@ -20,7 +20,7 @@ const csvWriter = createCsvWriter({
 });
 let list1 = [];
 let list2 = [];
-fs.createReadStream('data.csv')
+createReadStream('data.csv')
     .pipe(csv())
     .on('data', (row) => {
         list1.push(row);
@@ -29,7 +29,7 @@ fs.createReadStream('data.csv')
         console.log('CSV file successfully processed');
         console.log(list1.length);
 
-        fs.createReadStream('danh_sach_tnv.csv')
+        createReadStream('danh_sach_tnv.csv')
             .pipe(csv())
             .on('data', (row) => {
                 list2.push(row);

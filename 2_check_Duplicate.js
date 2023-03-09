@@ -1,24 +1,24 @@
 // Requiring the module
-const reader = require("xlsx");
-const excel = require("excel4node");
-const fs = require("fs"); // Or `import fs from "fs";` with ESM
+import { readFile, utils, writeFile } from "xlsx";
+import { Workbook } from "excel4node";
+import { existsSync } from "fs"; // Or `import fs from "fs";` with ESM
 
 // Reading our test file
 const fileName = "list_form_2";
 
 // result file name
 const retFileName = fileName + "-Done.xlsx";
-var workbook = new excel.Workbook();
+var workbook = new Workbook();
 var worksheet = workbook.addWorksheet("Sheet1");
 workbook.write(retFileName);
 
-const file = reader.readFile("./" + fileName + ".xlsx");
+const file = readFile("./" + fileName + ".xlsx");
 const sheets = file.SheetNames;
 const data = [];
 const result = [];
 
 for (let i = 0; i < sheets.length; i++) {
-  const temp = reader.utils.sheet_to_json(file.Sheets[file.SheetNames[i]]);
+  const temp = utils.sheet_to_json(file.Sheets[file.SheetNames[i]]);
   temp.forEach((res) => {
     data.push(res);
   });
@@ -53,13 +53,13 @@ for (let i = 0; i < data.length; i++) {
 function saveFile() {
   let path = "./" + retFileName;
   console.log("Saving_file...");
-  if (fs.existsSync(path)) {
-    const ws = reader.utils.json_to_sheet(result);
-    const fileResult = reader.readFile(path);
+  if (existsSync(path)) {
+    const ws = utils.json_to_sheet(result);
+    const fileResult = readFile(path);
     console.log("Result_length_final", result.length);
-    reader.utils.book_append_sheet(fileResult, ws, "result");
+    utils.book_append_sheet(fileResult, ws, "result");
     // Writing to our file
-    reader.writeFile(fileResult, path);
+    writeFile(fileResult, path);
     clearInterval(iid);
   }
 }

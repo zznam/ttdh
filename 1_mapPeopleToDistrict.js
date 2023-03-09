@@ -1,20 +1,20 @@
 // Requiring the module
-const reader = require('xlsx');
-const excel = require('excel4node');
-const fs = require("fs"); // Or `import fs from "fs";` with ESM
+import { readFile, utils, writeFile } from 'xlsx';
+import { Workbook } from 'excel4node';
+import { existsSync } from "fs"; // Or `import fs from "fs";` with ESM
 
 // Reading our test file
 const fileName = "20210915-XuLy";
 
 // result file name
 const retFileName = fileName + '-Done.xlsx';
-var workbook = new excel.Workbook();
+var workbook = new Workbook();
 var worksheet = workbook.addWorksheet('Sheet 1');
 workbook.write(retFileName)
 
-const file = reader.readFile('./' + fileName + '.xlsx')
-const mapDistrictBdFile = reader.readFile('./1_mapDistrictBdFile.xlsx')
-const provinceCodeFile = reader.readFile('./1_mapProvinceVnFile.xlsx')
+const file = readFile('./' + fileName + '.xlsx')
+const mapDistrictBdFile = readFile('./1_mapDistrictBdFile.xlsx')
+const provinceCodeFile = readFile('./1_mapProvinceVnFile.xlsx')
 
 let data = []
 let mapDistrict = []
@@ -97,21 +97,21 @@ function phoneNomalize(phone) {
 
 
 for (let i = 0; i < sheets.length; i++) {
-    const temp = reader.utils.sheet_to_json(
+    const temp = utils.sheet_to_json(
         file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
         data.push(res)
     })
 }
 for (let i = 0; i < sheetsFile2.length; i++) {
-    const temp = reader.utils.sheet_to_json(
+    const temp = utils.sheet_to_json(
         mapDistrictBdFile.Sheets[mapDistrictBdFile.SheetNames[i]])
     temp.forEach((res) => {
         mapDistrict.push(res)
     })
 }
 for (let i = 0; i < sheetsFile3.length; i++) {
-    const temp = reader.utils.sheet_to_json(
+    const temp = utils.sheet_to_json(
         provinceCodeFile.Sheets[provinceCodeFile.SheetNames[i]])
     temp.forEach((res) => {
         provinceList.push(res)
@@ -294,14 +294,14 @@ for (let i = 0; i < data.length; i++) {
 function saveFile(data) {
     let path = './' + retFileName
     console.log("saving_file...");
-    if (fs.existsSync(path)) {
+    if (existsSync(path)) {
 
-        const ws = reader.utils.json_to_sheet(data)
-        const fileResult = reader.readFile(path)
+        const ws = utils.json_to_sheet(data)
+        const fileResult = readFile(path)
         console.log("data__length_final", data.length);
-        reader.utils.book_append_sheet(fileResult, ws, "result")
+        utils.book_append_sheet(fileResult, ws, "result")
         // Writing to our file
-        reader.writeFile(fileResult, path)
+        writeFile(fileResult, path)
         clearInterval(iid)
     }
 }
